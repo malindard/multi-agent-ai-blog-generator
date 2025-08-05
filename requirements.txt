@@ -1,0 +1,7 @@
+streamlit==1.47.1
+crewai==0.152.0
+crewai-tools==0.59.0
+python-dotenv==1.1.1
+cohere==5.16.2
+chromadb
+sentence-transformers
