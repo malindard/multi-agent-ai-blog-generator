@@ -17,8 +17,6 @@ class WikipediaSearchTool(BaseTool):
             return f"Wikipedia lookup failed: {str(e)}"
 
 def get_llm(temperature: float):
-    from os import getenv
-    cohere_api_key = getenv("COHERE_API_KEY")
     return LLM(
         provider="cohere",
         model="command-r",
