@@ -3,7 +3,6 @@ crewai==0.152.0
 crewai-tools==0.59.0
 python-dotenv==1.1.1
 cohere==5.16.2
-chromadb
-sentence-transformers
-wikipedia
-pypandoc
+chromadb==0.5.23
+sentence-transformers==5.0.0
+wikipedia==1.4.0
