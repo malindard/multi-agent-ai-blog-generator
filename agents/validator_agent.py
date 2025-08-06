@@ -1,7 +1,7 @@
 from crewai import Agent, Task
-from core.tools import llm, WikipediaSearchTool
-from crewai.tools import BaseTool
+from core.tools import llm
 from utils.fact_memory import query_facts, store_fact
+from core.tools import WikipediaSearchTool
 
 wikipedia_tool = WikipediaSearchTool(
     name="Wikipedia Search Tool",
@@ -10,11 +10,12 @@ wikipedia_tool = WikipediaSearchTool(
 
 validator_agent = Agent(
     role="Fact Validator",
-    goal="Verify factual claims made in the research brief using public knowledge bases and trusted datasets",
+    goal="Validate every claim strictly against verified sources and previously stored memory",
     backstory=(
-        "You are a precise and impartial fact-checker. You verify names, dates, events, and statistics using tools like Wikipedia, Wikidata, and trusted APIs.\n"
-        "You identify inconsistencies, missing sources, or doubtful claims, and provide a confidence rating (High/Medium/Low) for each fact.\n"
-        "You also note if different sources contradict each other. You also use memory to avoid redundant validations."
+        "You're a professional fact-checker. You DO NOT assume or guess.\n"
+        "Your job is to confirm if a fact exists in prior memory or on Wikipedia.\n"
+        "If it’s not in memory and can’t be verified on Wikipedia, you reject it as unverifiable.\n"
+        "You attach confidence level and reason clearly."
     ),
     tools=[wikipedia_tool],
     allow_delegation=False,
@@ -26,20 +27,23 @@ def create_validator_task(topic: str) -> Task:
     return Task(
         description=(
             f"**Topic: {topic}**\n"
-            "Validate the facts in the research brief:\n"
-            "- First, check if a similar fact exists in memory using semantic search\n"
-            "- If found with high similarity, reuse and mark it as 'memory validated'\n"
-            "- If not found, validate using Wikipedia and public web sources\n"
-            "- If unconfirmed, mark as 'unverifiable' and add a note\n"
-            "- Add a confidence rating and source\n"
-            "- Store new validated facts in memory for future reuse"
+            "For each research claim provided:\n"
+            "1. Check if the claim already exists in memory using semantic search.\n"
+            "   - If found with high similarity (score < 0.2), reuse it and mark as 'memory validated'.\n"
+            "2. If not found, verify using Wikipedia.\n"
+            "   - Only accept if the fact appears directly on the page.\n"
+            "   - If not clearly confirmed, mark as 'unverifiable'.\n"
+            "3. Add a confidence score (High / Medium / Low) and a short note why.\n"
+            "4. All newly validated facts must be stored into memory."
         ),
         expected_output=(
-            "A list of facts with the following format:\n"
-            "- Fact: <the fact>\n"
-            "- Source: <URL or tool used>\n"
+            "A list of validation results for each fact.\n"
+            "Each must follow this format:\n"
+            "- Fact: <the exact claim>\n"
+            "- Source: <memory / Wikipedia / none>\n"
             "- Confidence: High / Medium / Low\n"
-            "- Notes: (e.g., 'from memory', 'newly verified', or 'not found')"
+            "- Notes: Explanation and reasoning\n"
+            "Facts not found in memory or Wikipedia must be rejected."
         ),
         agent=validator_agent
-)
+    )
