@@ -1,6 +1,9 @@
 import wikipedia
 from crewai import LLM
 from crewai.tools import BaseTool
+from os import getenv
+
+cohere_api_key = getenv("COHERE_API_KEY")
 
 class WikipediaSearchTool(BaseTool):
     name: str = "Wikipedia Search Tool"
@@ -13,7 +16,12 @@ class WikipediaSearchTool(BaseTool):
         except Exception as e:
             return f"Wikipedia lookup failed: {str(e)}"
 
-llm = LLM(
-    model="command-r",  # From cohere
-    temperature=0.7
-)
+def get_llm(temperature: float):
+    from os import getenv
+    cohere_api_key = getenv("COHERE_API_KEY")
+    return LLM(
+        provider="cohere",
+        model="command-r",
+        api_key=cohere_api_key,
+        temperature=temperature
+    )

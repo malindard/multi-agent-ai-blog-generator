@@ -1,5 +1,4 @@
 from crewai import Agent, Task
-from core.tools import llm
 from utils.fact_memory import query_facts, store_fact
 from core.tools import WikipediaSearchTool
 
@@ -8,22 +7,23 @@ wikipedia_tool = WikipediaSearchTool(
     description="Looks up and summarizes Wikipedia articles related to a given topic."
 )
 
-validator_agent = Agent(
-    role="Fact Validator",
-    goal="Validate every claim strictly against verified sources and previously stored memory",
-    backstory=(
-        "You're a professional fact-checker. You DO NOT assume or guess.\n"
-        "Your job is to confirm if a fact exists in prior memory or on Wikipedia.\n"
-        "If it’s not in memory and can’t be verified on Wikipedia, you reject it as unverifiable.\n"
-        "You attach confidence level and reason clearly."
-    ),
-    tools=[wikipedia_tool],
-    allow_delegation=False,
-    verbose=True,
-    llm=llm
+def create_validator_agent(llm):
+    return Agent(
+        role="Fact Validator",
+        goal="Validate every claim strictly against verified sources and previously stored memory",
+        backstory=(
+            "You're a professional fact-checker. You DO NOT assume or guess.\n"
+            "Your job is to confirm if a fact exists in prior memory or on Wikipedia.\n"
+            "If it’s not in memory and can’t be verified on Wikipedia, you reject it as unverifiable.\n"
+            "You attach confidence level and reason clearly."
+        ),
+        tools=[wikipedia_tool],
+        allow_delegation=False,
+        verbose=True,
+        llm=llm
 )
 
-def create_validator_task(topic: str) -> Task:
+def create_validator_task(topic: str, agent):
     return Task(
         description=(
             f"**Topic: {topic}**\n"
@@ -45,5 +45,5 @@ def create_validator_task(topic: str) -> Task:
             "- Notes: Explanation and reasoning\n"
             "Facts not found in memory or Wikipedia must be rejected."
         ),
-        agent=validator_agent
+        agent=agent
     )

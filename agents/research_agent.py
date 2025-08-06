@@ -1,23 +1,23 @@
 from crewai import Agent, Task
 from crewai_tools import SerperDevTool
-from core.tools import llm
 
 search_tool = SerperDevTool(n_results=10)
 
-research_agent = Agent(
-    role="Research Analyst",
-    goal="Collect trustworthy and diverse information about a given topic using reputable sources",
-    backstory=(
-        "You're an expert researcher and senior research analyst that trained in journalism and data analysis. You specialize in sourcing factual, non-biased information from reliable websites.\n"
-        "You know how to discard promotional, speculative, or low-quality content. Your goal is to provide structured, evidence-rich research with citations for use in publication-grade writing."
-    ),
-    tools=[search_tool],
-    allow_delegation=False,
-    verbose=True,
-    llm=llm
+def create_research_agent(llm):
+    return Agent(
+        role="Research Analyst",
+        goal="Collect trustworthy and diverse information about a given topic using reputable sources",
+        backstory=(
+            "You're an expert researcher and senior research analyst that trained in journalism and data analysis. You specialize in sourcing factual, non-biased information from reliable websites.\n"
+            "You know how to discard promotional, speculative, or low-quality content. Your goal is to provide structured, evidence-rich research with citations for use in publication-grade writing."
+        ),
+        tools=[search_tool],
+        allow_delegation=False,
+        verbose=True,
+        llm=llm
 )
 
-def create_research_task(topic: str) -> Task:
+def create_research_task(topic: str, agent):
     return Task(
         description=(
             f"**Topic: {topic}**\n"
@@ -47,5 +47,5 @@ def create_research_task(topic: str) -> Task:
             "All facts must include working, trustworthy citations in the format [Source](URL). "
             "There must be no vague statements or hallucinated content. The structure must be clean and factual."
         ),
-        agent=research_agent
+        agent=agent
     )

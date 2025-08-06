@@ -1,6 +1,7 @@
 import streamlit as st
 from crew_builder import build_truthscribe_crew
 from utils.fact_memory import store_fact
+from core.tools import get_llm
 import random
 
 fun_facts = [
@@ -33,6 +34,7 @@ with st.sidebar:
         "Temperature (creativity)", 0.0, 1.0, 0.15,
         help="Lower = more factual and precise. Higher = more creative and varied, but possibly less accurate."
     )
+    llm = get_llm(temperature)
     generate = st.button("🚀 Generate Article")
 
     st.markdown("---")
@@ -70,7 +72,7 @@ with st.sidebar:
 if generate and topic:
     with st.spinner(f"Generating article... {loading_message}"):
         try:
-            result = build_truthscribe_crew(topic)
+            result = build_truthscribe_crew(topic, llm)
             st.subheader("📰 Final Output")
             st.markdown(result.raw)
             st.download_button(
@@ -84,4 +86,4 @@ if generate and topic:
             st.error(f"🚨 Error: {str(e)}")
 
 st.markdown("---")
-st.caption("Built with Streamlit + CrewAI + Chroma + Wikipedia + Serper")
+st.caption("Built with CrewAI + Cohere + Wikipedia + Serper + Streamlit + Chroma")
