@@ -113,6 +113,7 @@ MIT License — free to use, fork, and extend.
 
 ---
 **👉 Also check out:**  
-A same project built using **LangChain** instead of **CrewAI** — modular chain execution, model flexibility, same fact-check pipeline, but with a different orchestration style (plus Streamlit)(https://github.com/malindard/langchain-ai-news-generator)
+A same project built using **LangChain** instead of **CrewAI** — modular chain execution, model flexibility, same fact-check pipeline, but with a different orchestration style (plus Streamlit). 
+[Check out here](https://github.com/malindard/langchain-ai-news-generator)
 
 > *“Let the agents do the fact-checking. You just pick the topic.”*
