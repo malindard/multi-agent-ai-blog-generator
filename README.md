@@ -71,7 +71,7 @@ Topic → Research Agent → Validator Agent → Writer Agent → Citation Agent
 Clone the repo and set up a virtual environment:
 
 ```bash
-git clone https://github.com/yourusername/ai-blog-generator.git
+git clone https://github.com/malindard/ai-blog-generator.git
 cd ai-blog-generator
 python -m venv myenv
 source myenv/bin/activate   # or .\myenv\Scripts\activate on Windows
@@ -112,5 +112,7 @@ MIT License — free to use, fork, and extend.
 🙌 Contributions are welcome! Open an **issue** for bugs/suggestions or a **pull request** to improve the project.  
 
 ---
+**👉 Also check out:**  
+A same project built using **LangChain** instead of **CrewAI** — modular chain execution, model flexibility, same fact-check pipeline, but with a different orchestration style (plus Streamlit)(https://github.com/malindard/langchain-ai-news-generator)
 
-👉 Tagline: *“Let the agents do the fact-checking. You just pick the topic.”*
+> *“Let the agents do the fact-checking. You just pick the topic.”*
